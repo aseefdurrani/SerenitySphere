@@ -1,5 +1,7 @@
 import { AppBar, Toolbar, Box, Button, Typography } from "@mui/material";
 import { blue } from "@mui/material/colors";
+import HomeIcon from '@mui/icons-material/Home';
+import PersonIcon from '@mui/icons-material/Person';
 
 // Navbar component
 export default function NavbarComp() {
@@ -13,7 +15,7 @@ export default function NavbarComp() {
         >
           {/* Typography component for the title */}
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            @pantryTracker
+            @SerenitySphere
           </Typography>
           {/* Box component to hold the buttons, with flex display and gap between buttons */}
           <Box sx={{ display: "flex", gap: 2 }}>
@@ -29,7 +31,7 @@ export default function NavbarComp() {
                 },
               }}
             >
-              Go Home
+              <HomeIcon />
             </Button>
             {/* Button component for "Profile" */}
             <Button
@@ -42,7 +44,7 @@ export default function NavbarComp() {
                 },
               }}
             >
-              Profile
+              <PersonIcon />
             </Button>
           </Box>
         </Toolbar>

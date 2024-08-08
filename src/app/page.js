@@ -67,7 +67,6 @@ export default function Home() {
 
   return (
     <>
-      {/* Navbar component */}
       <NavbarComp />
       <Box
         width="100vw"
@@ -76,6 +75,12 @@ export default function Home() {
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
+        sx={{
+          backgroundImage: 'url(/assets/blue-indonesia.webp)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
       >
         <Stack
           direction="column"
@@ -84,39 +89,31 @@ export default function Home() {
           border="1px solid black"
           p={2}
           spacing={3}
+          bgcolor="rgba(255, 255, 255, 0.65)"
+          borderRadius={2}
         >
-          {/* Message display area */}
-          <Stack
-            direction="column"
-            spacing={2}
-            flexGrow={1}
-            overflow="auto"
-            maxHeight="100%"
-          >
-            {messages.map((message, index) => (
+          {messages.map((message, index) => (
+            <Box
+              key={index}
+              display="flex"
+              justifyContent={
+                message.role === "assistant" ? "flex-start" : "flex-end"
+              }
+            >
               <Box
-                key={index}
-                display="flex"
-                justifyContent={
-                  message.role === "assistant" ? "flex-start" : "flex-end"
+                bgcolor={
+                  message.role === "assistant"
+                    ? "primary.main"
+                    : "secondary.main"
                 }
+                color="white"
+                borderRadius={16}
+                p={3}
               >
-                <Box
-                  bgcolor={
-                    message.role === "assistant"
-                      ? "primary.main"
-                      : "secondary.main"
-                  }
-                  color="white"
-                  borderRadius={16}
-                  p={3}
-                >
-                  {message.content}
-                </Box>
+                {message.content}
               </Box>
-            ))}
-          </Stack>
-          {/* Input area */}
+            </Box>
+          ))}
           <Stack direction="row" spacing={2}>
             <TextField
               label="Message"
