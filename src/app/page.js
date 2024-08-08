@@ -4,6 +4,7 @@ import { useState } from "react";
 import NavbarComp from "./components/navbar";
 
 export default function Home() {
+  // State to hold the list of messages
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -11,10 +12,14 @@ export default function Home() {
     },
   ]);
 
+  // State to hold the current message input by the user
   const [message, setMessage] = useState("");
 
+  // Function to handle sending a message
   const sendMessage = async () => {
+    // Clear the input field
     setMessage("");
+    // Add the user's message and a placeholder for the assistant's response
     setMessages((messages) => [
       ...messages,
       {
@@ -23,6 +28,8 @@ export default function Home() {
       },
       { role: "assistant", content: "" },
     ]);
+
+    // Send the message to the server
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
@@ -34,11 +41,14 @@ export default function Home() {
       const decoder = new TextDecoder();
 
       let result = "";
+      // Read the response stream
       return reader.read().then(function processText({ done, value }) {
         if (done) {
           return result;
         }
+        // Decode the response text
         const text = decoder.decode(value || new Int8Array(), { stream: true });
+        // Update the last message with the assistant's response
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1];
           let otherMessages = messages.slice(0, messages.length - 1);
@@ -57,8 +67,8 @@ export default function Home() {
 
   return (
     <>
+      {/* Navbar component */}
       <NavbarComp />
-
       <Box
         width="100vw"
         height="100vh"
@@ -75,6 +85,7 @@ export default function Home() {
           p={2}
           spacing={3}
         >
+          {/* Message display area */}
           <Stack
             direction="column"
             spacing={2}
@@ -105,6 +116,7 @@ export default function Home() {
               </Box>
             ))}
           </Stack>
+          {/* Input area */}
           <Stack direction="row" spacing={2}>
             <TextField
               label="Message"
