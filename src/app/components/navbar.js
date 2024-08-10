@@ -3,13 +3,20 @@ import { blue, lightBlue } from "@mui/material/colors";
 import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import { useRouter } from "next/navigation";
+import DrawerComponent from "./drawer";
+import { useState } from "react";
 
 // Navbar component
 export default function NavbarComp() {
   const router = useRouter();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleButtonClick = () => {
     router.push("/home");
+  };
+
+  const toggleDrawer = (open) => () => {
+    setIsDrawerOpen(open);
   };
 
   const navColor = "#89c2d9";
@@ -52,12 +59,14 @@ export default function NavbarComp() {
                   backgroundColor: "rgba(255, 255, 255, 0.1)",
                 },
               }}
+              onClick={toggleDrawer(true)}
             >
               <PersonIcon />
             </Button>
           </Box>
         </Toolbar>
       </AppBar>
+      <DrawerComponent isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
     </>
   );
 }
