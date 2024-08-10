@@ -1,15 +1,13 @@
 "use client";
-import { Box, Button, Stack, TextField } from "@mui/material";
-import { useState } from "react";
+import { Box, Button, Stack } from "@mui/material";
+import { useRouter } from "next/router";
+import { useClerk } from '@clerk/nextjs';
 import NavbarComp from "./components/navbar";
-import { useRouter } from "next/navigation";
 
 export default function Home() {
-  // const backgroundImage = "/SerenitySphereMaybe-modified2.png";
+  const { openSignIn, openSignUp } = useClerk();
 
   const backgroundImage = "/bgs/cloud2.webp";
-
-  const router = useRouter();
 
   const buttonStyle = {
     marginTop: "30px",
@@ -18,7 +16,7 @@ export default function Home() {
     padding: "5px 20px",
     borderRadius: "20px",
     border: "1px solid black",
-    textTransform: 'capitalize', // Only capitalize the first letter
+    textTransform: 'capitalize',
     "&:hover": {
       backgroundColor: "rgba(0, 0, 0, 0.1)",
       boxShadow: "0 0.5em 0.5em -0.4em #ffe5d9",
@@ -27,15 +25,7 @@ export default function Home() {
     }
   };
 
-  // would have intermediate page to route to where user can deecide what chat to click on
-  // just sample for now
-  // const handleButtonClick = () => {
-  //   router.push("/chatRoom/fitness");
-  // };
-
-  const handleButtonClick = (path) => {
-    router.push(path);
-  };
+  const redirectUrl = '/home';
 
   return (
     <Box
@@ -53,7 +43,7 @@ export default function Home() {
           alignItems: "center",
           justifyContent: "center",
           height: "100%",
-          transform: "translateY(-60px)", // Adjust the value as needed
+          transform: "translateY(-60px)",
         }}
       >
         <Stack spacing={1.8} alignContent="center" alignItems="center">
@@ -74,20 +64,20 @@ export default function Home() {
             }}
           >
             your oasis of calm and care
-            </Box>
+          </Box>
           <Button
             variant="contained"
             sx={buttonStyle}
-            onClick={() => handleButtonClick("/login")}
+            onClick={() => openSignIn( redirectUrl )}
           >
-            Login
+            Sign in
           </Button>
           <Button
             variant="contained"
             sx={buttonStyle}
-            onClick={() => handleButtonClick("/signup")}
+            onClick={() => openSignUp( redirectUrl )}
           >
-            Signup
+            Sign
           </Button>
         </Stack>
       </Box>
