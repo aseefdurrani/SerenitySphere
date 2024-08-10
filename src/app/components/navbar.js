@@ -1,5 +1,5 @@
 import { AppBar, Toolbar, Box, Button, Typography } from "@mui/material";
-import { blue } from "@mui/material/colors";
+import { blue, lightBlue } from "@mui/material/colors";
 import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import { useRouter } from "next/navigation";
@@ -9,13 +9,15 @@ export default function NavbarComp() {
   const router = useRouter();
 
   const handleButtonClick = () => {
-    router.push("/");
+    router.push("/home");
   };
+
+  const navColor = "#89c2d9";
 
   return (
     <>
       {/* AppBar component from MUI with a static position and blue background */}
-      <AppBar position="static" sx={{ backgroundColor: blue }}>
+      <AppBar position="static" sx={{ backgroundColor: navColor }}>
         {/* Toolbar component to hold the content of the AppBar */}
         <Toolbar
           sx={{ justifyContent: "space-between", backgroundColor: blue }}
