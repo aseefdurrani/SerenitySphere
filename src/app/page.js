@@ -5,7 +5,9 @@ import NavbarComp from "./components/navbar";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const backgroundImage = "/SerenitySphereMaybe-modified2.png"; // Update with your image path
+  // const backgroundImage = "/SerenitySphereMaybe-modified2.png";
+
+  const backgroundImage = "/bgs/cloud2.webp";
 
   const router = useRouter();
 
