@@ -3,6 +3,7 @@ import { Box, Button, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import NavbarComp from "../components/navbar";
 import { useEffect } from "react";
+import DrawerComponent from "../components/drawer";
 
 export default function Home() {
   const backgroundImage = "/bgs/sphere.webp";
