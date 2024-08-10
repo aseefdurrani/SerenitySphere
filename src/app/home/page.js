@@ -29,21 +29,27 @@ export default function Home() {
     },
   };
 
-  const generateRandomKeyframes = (index) => {
-    const translateYStart = Math.random() * 20 - 10; // Random start position between -10px and 10px
-    const translateYMid = Math.random() * 40 - 20; // Random mid position between -20px and 20px
-    const translateYEnd = Math.random() * 20 - 10; // Random end position between -10px and 10px
+  const predefinedKeyframes = [
+    { start: 0, mid: 20, end: 0 },
+    { start: 0, mid: -20, end: 0 },
+    { start: 0, mid: 15, end: 0 },
+    { start: 0, mid: -15, end: 0 },
+    { start: 0, mid: 18, end: 0 },
+    { start: 0, mid: -18, end: 0 },
+  ];
 
+  const generateKeyframes = (index) => {
+    const { start, mid, end } = predefinedKeyframes[index];
     return `
       @keyframes float-${index} {
         0% {
-          transform: translateY(${translateYStart}px);
+          transform: translateY(${start}px);
         }
         50% {
-          transform: translateY(${translateYMid}px);
+          transform: translateY(${mid}px);
         }
         100% {
-          transform: translateY(${translateYEnd}px);
+          transform: translateY(${end}px);
         }
       }
     `;
@@ -51,8 +57,8 @@ export default function Home() {
 
   useEffect(() => {
     const styleSheet = document.styleSheets[0];
-    for (let i = 0; i < 6; i++) {
-      const keyframes = generateRandomKeyframes(i);
+    for (let i = 0; i < predefinedKeyframes.length; i++) {
+      const keyframes = generateKeyframes(i);
       styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
     }
   }, []);
@@ -61,9 +67,7 @@ export default function Home() {
     <>
       <NavbarComp />
       <style jsx global>{`
-        ${Array.from({ length: 6 }, (_, i) => generateRandomKeyframes(i)).join(
-          "\n"
-        )}
+        ${predefinedKeyframes.map((_, i) => generateKeyframes(i)).join("\n")}
       `}</style>
       <Box
         sx={{
