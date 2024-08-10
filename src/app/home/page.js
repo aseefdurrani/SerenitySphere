@@ -4,8 +4,10 @@ import { useRouter } from "next/navigation";
 import NavbarComp from "../components/navbar";
 import { useEffect } from "react";
 import DrawerComponent from "../components/drawer";
+import { useUser } from "@clerk/nextjs";
 
 export default function Home() {
+  const { user } = useUser();
   const backgroundImage = "/bgs/sphere.webp";
   const router = useRouter();
 
@@ -31,12 +33,12 @@ export default function Home() {
   };
 
   const predefinedKeyframes = [
-    { start: 0, mid: -20, end: 0 },
-    { start: 0, mid: 20, end: 0 },
-    { start: 0, mid: -15, end: 0 },
-    { start: 0, mid: 15, end: 0 },
-    { start: 0, mid: -18, end: 0 },
-    { start: 0, mid: 18, end: 0 },
+    { start: 0, mid: -16, end: 0 },
+    { start: 0, mid: 16, end: 0 },
+    { start: 0, mid: -9, end: 0 },
+    { start: 0, mid: 9, end: 0 },
+    { start: 0, mid: -14, end: 0 },
+    { start: 0, mid: 14, end: 0 },
   ];
 
   const generateKeyframes = (index) => {
@@ -88,7 +90,7 @@ export default function Home() {
           }}
         >
           <Typography variant="h2" sx={{ color: "white" }}>
-            Welcome (Insert Name)
+            Welcome, {user?.firstName}
           </Typography>
         </Box>
         <Stack spacing={4} direction="row" justifyContent="center">
