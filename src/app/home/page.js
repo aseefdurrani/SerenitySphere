@@ -30,12 +30,12 @@ export default function Home() {
   };
 
   const predefinedKeyframes = [
-    { start: 0, mid: 20, end: 0 },
     { start: 0, mid: -20, end: 0 },
-    { start: 0, mid: 15, end: 0 },
+    { start: 0, mid: 20, end: 0 },
     { start: 0, mid: -15, end: 0 },
-    { start: 0, mid: 18, end: 0 },
+    { start: 0, mid: 15, end: 0 },
     { start: 0, mid: -18, end: 0 },
+    { start: 0, mid: 18, end: 0 },
   ];
 
   const generateKeyframes = (index) => {
