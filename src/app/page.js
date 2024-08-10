@@ -77,7 +77,7 @@ export default function Home() {
             sx={buttonStyle}
             onClick={() => openSignUp( redirectUrl )}
           >
-            Sign
+            Sign up
           </Button>
         </Stack>
       </Box>
