@@ -1,10 +1,17 @@
 import { AppBar, Toolbar, Box, Button, Typography } from "@mui/material";
 import { blue } from "@mui/material/colors";
-import HomeIcon from '@mui/icons-material/Home';
-import PersonIcon from '@mui/icons-material/Person';
+import HomeIcon from "@mui/icons-material/Home";
+import PersonIcon from "@mui/icons-material/Person";
+import { useRouter } from "next/navigation";
 
 // Navbar component
 export default function NavbarComp() {
+  const router = useRouter();
+
+  const handleButtonClick = () => {
+    router.push("/");
+  };
+
   return (
     <>
       {/* AppBar component from MUI with a static position and blue background */}
@@ -23,7 +30,7 @@ export default function NavbarComp() {
             <Button
               color="inherit"
               variant="outlined"
-              onClick={() => console.log("works")} // Corrected the onClick handler
+              onClick={handleButtonClick} // Corrected the onClick handler
               sx={{
                 borderColor: "white",
                 "&:hover": {

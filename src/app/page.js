@@ -12,7 +12,7 @@ export default function Home() {
   // would have intermediate page to route to where user can deecide what chat to click on
   // just sample for now
   const handleButtonClick = () => {
-    router.push("/chat/fitness");
+    router.push("/chatRoom/fitness");
   };
 
   return (
