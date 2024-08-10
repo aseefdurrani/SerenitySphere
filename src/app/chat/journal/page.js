@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Button, Stack, TextField } from "@mui/material";
-import Layout from '../Layout'; // Adjust the path based on your project structure
+import { useState } from "react";
+import Layout from '../Layout';
 
-const MoodChat = () => {
+export default function JournalingPage() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -17,7 +18,10 @@ const MoodChat = () => {
     setMessage("");
     setMessages((messages) => [
       ...messages,
-      { role: "user", content: message },
+      {
+        role: "user",
+        content: message,
+      },
       { role: "assistant", content: "" },
     ]);
 
@@ -33,13 +37,20 @@ const MoodChat = () => {
 
       let result = "";
       return reader.read().then(function processText({ done, value }) {
-        if (done) return result;
-
+        if (done) {
+          return result;
+        }
         const text = decoder.decode(value || new Int8Array(), { stream: true });
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1];
           let otherMessages = messages.slice(0, messages.length - 1);
-          return [...otherMessages, { ...lastMessage, content: lastMessage.content + text }];
+          return [
+            ...otherMessages,
+            {
+              ...lastMessage,
+              content: lastMessage.content + text,
+            },
+          ];
         });
         return reader.read().then(processText);
       });
@@ -100,6 +111,4 @@ const MoodChat = () => {
       </Stack>
     </Layout>
   );
-};
-
-export default MoodChat;
+}
