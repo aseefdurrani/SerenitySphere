@@ -77,7 +77,7 @@ const FitnessChat = () => {
         justifyContent="center"
         alignItems="center"
         sx={{
-          backgroundImage: "url(/assets/blue-indonesia.webp)",
+          backgroundImage: "url(/bgs/chatBg.webp)",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
