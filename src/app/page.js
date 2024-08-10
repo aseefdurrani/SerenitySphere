@@ -11,10 +11,30 @@ export default function Home() {
 
   const router = useRouter();
 
+  const buttonStyle = {
+    marginTop: "30px",
+    backgroundColor: "transparent",
+    color: "black",
+    padding: "5px 20px",
+    borderRadius: "20px",
+    border: "1px solid black",
+    textTransform: 'capitalize', // Only capitalize the first letter
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.1)",
+      boxShadow: "0 0.5em 0.5em -0.4em #ffe5d9",
+      transform: "translateY(-0.15em)",
+      cursor: "pointer",
+    }
+  };
+
   // would have intermediate page to route to where user can deecide what chat to click on
   // just sample for now
-  const handleButtonClick = () => {
-    router.push("/chatRoom/fitness");
+  // const handleButtonClick = () => {
+  //   router.push("/chatRoom/fitness");
+  // };
+
+  const handleButtonClick = (path) => {
+    router.push(path);
   };
 
   return (
@@ -36,7 +56,7 @@ export default function Home() {
           transform: "translateY(-60px)", // Adjust the value as needed
         }}
       >
-        <Stack spacing={3} alignContent="center" alignItems="center">
+        <Stack spacing={1.8} alignContent="center" alignItems="center">
           <Box
             sx={{
               fontSize: "5rem",
@@ -54,24 +74,20 @@ export default function Home() {
             }}
           >
             your oasis of calm and care
-          </Box>
+            </Box>
           <Button
             variant="contained"
-            sx={{
-              marginTop: "30px",
-              backgroundColor: "transparent",
-              color: "black",
-              border: "1px solid black",
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-                boxShadow: "0 0.5em 0.5em -0.4em #ffe5d9",
-                transform: "translateY(-0.15em)",
-                cursor: "pointer",
-              },
-            }}
-            onClick={handleButtonClick}
+            sx={buttonStyle}
+            onClick={() => handleButtonClick("/login")}
           >
-            Click to Get Started
+            Login
+          </Button>
+          <Button
+            variant="contained"
+            sx={buttonStyle}
+            onClick={() => handleButtonClick("/signup")}
+          >
+            Signup
           </Button>
         </Stack>
       </Box>
