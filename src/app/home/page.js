@@ -4,8 +4,10 @@ import { useRouter } from "next/navigation";
 import NavbarComp from "../components/navbar";
 import { useEffect } from "react";
 import DrawerComponent from "../components/drawer";
+import { useUser } from "@clerk/nextjs";
 
 export default function Home() {
+  const { user } = useUser();
   const backgroundImage = "/bgs/sphere.webp";
   const router = useRouter();
 
@@ -87,9 +89,9 @@ export default function Home() {
             height: "60%",
           }}
         >
-          <Typography variant="h2" sx={{ color: "white" }}>
-            Welcome (Insert Name)
-          </Typography>
+        <Typography variant="h2" sx={{ color: "white" }}>
+          Welcome, {user?.firstName}
+        </Typography>
         </Box>
         <Stack spacing={4} direction="row" justifyContent="center">
           {[
