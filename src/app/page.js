@@ -59,6 +59,15 @@ export default function Home() {
             variant="contained"
             sx={{
               marginTop: "30px",
+              backgroundColor: "transparent",
+              color: "black",
+              border: "1px solid black",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                boxShadow: "0 0.5em 0.5em -0.4em #ffe5d9",
+                transform: "translateY(-0.15em)",
+                cursor: "pointer",
+              },
             }}
             onClick={handleButtonClick}
           >
