@@ -1,11 +1,13 @@
 "use client";
 import { Box, Button, Stack } from "@mui/material";
-import { useRouter } from "next/router";
-import { useClerk } from '@clerk/nextjs';
+import { useRouter } from "next/navigation";
+import { useClerk, useUser } from "@clerk/nextjs";
 import NavbarComp from "./components/navbar";
 
 export default function Home() {
-  const { openSignIn, openSignUp } = useClerk();
+  const { openSignIn, openSignUp, signOut } = useClerk(); // Added signOut function
+  const { isSignedIn } = useUser();
+  const router = useRouter();
 
   const backgroundImage = "/bgs/cloud2.webp";
 
@@ -25,7 +27,26 @@ export default function Home() {
     }
   };
 
-  const redirectUrl = '/home';
+  const redirectUrl = '/home'; // The path to redirect to after sign-in or sign-up
+
+  const handleSignIn = () => {
+    if (isSignedIn) {
+      router.push(redirectUrl);
+    } else {
+      openSignIn({ afterSignInUrl: redirectUrl });
+    }
+  };
+
+  const handleSignUp = () => {
+    if (isSignedIn) {
+      // Sign out the current user before opening the sign-up modal
+      signOut().then(() => {
+        openSignUp({ afterSignUpUrl: redirectUrl });
+      });
+    } else {
+      openSignUp({ afterSignUpUrl: redirectUrl });
+    }
+  };
 
   return (
     <Box
@@ -68,14 +89,14 @@ export default function Home() {
           <Button
             variant="contained"
             sx={buttonStyle}
-            onClick={() => openSignIn( redirectUrl )}
+            onClick={handleSignIn}
           >
             Sign in
           </Button>
           <Button
             variant="contained"
             sx={buttonStyle}
-            onClick={() => openSignUp( redirectUrl )}
+            onClick={handleSignUp}
           >
             Sign up
           </Button>
