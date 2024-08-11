@@ -50,18 +50,24 @@ const DrawerComponent = ({ isOpen, toggleDrawer }) => {
       onKeyDown={toggleDrawer(false)}
       sx={{ width: 300, height: "100%", ...drawerStyle }}
     >
-        <Stack spacing={3} direction="column" alignItems="center" marginTop={5}>
-          {/* Conditional rendering for Avatar with fallback */}
-          <Avatar
-            sx={{ width: 100, height: 100 }}
-            src={user?.imageUrl}
-            alt={user?.fullName || "User"}
-          >
-            {!user?.imageUrl && <AccountCircleIcon sx={{ fontSize: 100 }} />}
-          </Avatar>
-          <Typography variant="h6">{user?.fullName || "Unnamed User"}</Typography>
-          <Typography variant="h6">Email: {user?.primaryEmailAddress?.emailAddress || "No Email Available"}</Typography>
-          <Typography variant="h6">Subscription Level: Free</Typography>
+      <Stack spacing={3} direction="column" alignItems="center" marginTop={5}>
+        {/* Conditional rendering for Avatar with fallback */}
+        <Avatar
+          sx={{ width: 100, height: 100 }}
+          src={user?.imageUrl}
+          alt={user?.fullName || "User"}
+        >
+          {!user?.imageUrl && <AccountCircleIcon sx={{ fontSize: 100 }} />}
+        </Avatar>
+        <Typography variant="h6" align="center" sx={{ width: '100%', textAlign: 'center' }}>
+          {user?.fullName || "Unnamed User"}
+        </Typography>
+        <Typography variant="h6" align="center" sx={{ width: '100%', textAlign: 'center' }}>
+          Email: {user?.primaryEmailAddress?.emailAddress || "No Email Available"}
+        </Typography>
+        <Typography variant="h6" align="center" sx={{ width: '100%', textAlign: 'center' }}>
+          Subscription Level: Free
+        </Typography>
         <Stack spacing={2} direction="row">
           <Button
             variant="contained"

@@ -1,6 +1,5 @@
-"use client";
 import React from "react";
-import { Box, Stack, TextField, Button, List, ListItem, Typography } from "@mui/material";
+import { Box, Stack, TextField, Button, List, ListItem } from "@mui/material";
 import NavbarComp from "../components/navbar";
 
 const Layout = ({
@@ -8,11 +7,11 @@ const Layout = ({
   message,
   setMessage,
   sendMessage,
-  chatTopics = [], // Default to an empty array if not provided
+  chatTopics = [],
   activeChat,
   setActiveChat,
   startNewConversation,
-  children, // Allow additional children content
+  children,
 }) => {
   return (
     <>
@@ -23,7 +22,7 @@ const Layout = ({
         display="flex"
         flexDirection="row"
         justifyContent="center"
-        alignItems="flex-start" // Adjust alignment to flex-start to align at the top
+        alignItems="flex-start"
         sx={{
           backgroundImage: "url(/bgs/chatBg.webp)",
           backgroundSize: "cover",
@@ -37,7 +36,7 @@ const Layout = ({
           bgcolor="rgba(0, 0, 0, 0.7)"
           color="white"
           overflow="auto"
-          sx={{ marginRight: "20px" }} // Add space between conversation sidebar and chat box
+          sx={{ marginRight: "20px" }}
         >
           <Button onClick={startNewConversation} sx={{ width: "100%", bgcolor: "primary.dark" }}>
             New Conversation
@@ -47,22 +46,22 @@ const Layout = ({
               <ListItem
                 key={index}
                 button
-                selected={topic === activeChat}
+                selected={topic.id === activeChat?.id}
                 onClick={() => setActiveChat(topic)}
                 sx={{
                   borderBottom: "1px solid white",
                   justifyContent: "center",
-                  bgcolor: topic === activeChat ? "primary.main" : "transparent", // Highlight the active conversation
+                  bgcolor: topic.id === activeChat?.id ? "primary.main" : "transparent",
                 }}
               >
-                {new Date(topic).toLocaleTimeString()} // Display timestamp as title
+                {new Date(topic.startedAt).toLocaleString()}
               </ListItem>
             ))}
           </List>
         </Box>
         <Stack
           direction="column"
-          width="calc(100% - 340px)" // Ensure the chat box expands to fill the space
+          width="calc(100% - 340px)"
           height="700px"
           border="1px solid black"
           p={2}
@@ -75,23 +74,21 @@ const Layout = ({
             marginTop: "20px"
           }}
         >
-          {messages.map((message, index) => (
+          {messages.map((msg, index) => (
             <Box
               key={index}
               display="flex"
-              justifyContent={
-                message.role === "assistant" ? "flex-start" : "flex-end"
-              }
+              justifyContent={msg.role === "assistant" ? "flex-start" : "flex-end"}
+              sx={{ width: '100%' }}
             >
               <Box
-                bgcolor={
-                  message.role === "assistant" ? "primary.main" : "secondary.main"
-                }
+                bgcolor={msg.role === "assistant" ? "primary.main" : "secondary.main"}
                 color="white"
                 borderRadius={16}
                 p={3}
+                sx={{ maxWidth: '80%' }}
               >
-                {message.content}
+                {msg.content}
               </Box>
             </Box>
           ))}
