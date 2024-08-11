@@ -86,8 +86,26 @@ const Layout = ({
                 color="white"
                 borderRadius={16}
                 p={3}
-                sx={{ maxWidth: '80%' }}
-              >
+                sx={{
+                  fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                  fontSize: "1rem",
+                  lineHeight: 1.5,
+                  maxWidth: "80%",
+                  wordWrap: "break-word",
+                  boxShadow: 2,
+                  "& strong": {
+                    fontWeight: "bold",
+                  },
+                  "& br": {
+                    display: "block",
+                    content: '""',
+                    marginTop: "0.5em",
+                  },
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: message.content,
+                }}
+                >
                 {msg.content}
               </Box>
             </Box>
