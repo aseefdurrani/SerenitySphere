@@ -19,7 +19,7 @@ model User {
 
 model ChatBot {
   id            String         @id @default(uuid())
-  name          String
+  name          String         @unique
   type          BotType        @default(AI) // AI or LiveSupport
   description   String?
   users         User[]
