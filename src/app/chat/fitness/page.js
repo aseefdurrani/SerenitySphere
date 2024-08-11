@@ -43,7 +43,7 @@ const FitnessChat = () => {
 
         // parse the JSON text repsonse
         const jsonResponse = JSON.parse(text);
-        console.log("json response", jsonResponse);
+        // console.log("json response", jsonResponse);
         const assistantResponse = jsonResponse.response;
 
         setMessages((messages) => {
