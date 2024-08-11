@@ -1,6 +1,14 @@
 "use client";
 import React from "react";
-import { Box, Stack, TextField, Button, List, ListItem, Typography } from "@mui/material";
+import {
+  Box,
+  Stack,
+  TextField,
+  Button,
+  List,
+  ListItem,
+  Typography,
+} from "@mui/material";
 import NavbarComp from "../components/navbar";
 
 const Layout = ({
@@ -39,7 +47,10 @@ const Layout = ({
           overflow="auto"
           sx={{ marginRight: "20px" }} // Add space between conversation sidebar and chat box
         >
-          <Button onClick={startNewConversation} sx={{ width: "100%", bgcolor: "primary.dark" }}>
+          <Button
+            onClick={startNewConversation}
+            sx={{ width: "100%", bgcolor: "primary.dark" }}
+          >
             New Conversation
           </Button>
           <List>
@@ -52,10 +63,12 @@ const Layout = ({
                 sx={{
                   borderBottom: "1px solid white",
                   justifyContent: "center",
-                  bgcolor: topic === activeChat ? "primary.main" : "transparent", // Highlight the active conversation
+                  bgcolor:
+                    topic === activeChat ? "primary.main" : "transparent", // Highlight the active conversation
                 }}
               >
-                {new Date(topic).toLocaleTimeString()} // Display timestamp as title
+                {new Date(topic).toLocaleTimeString()} // Display timestamp as
+                title
               </ListItem>
             ))}
           </List>
@@ -72,7 +85,7 @@ const Layout = ({
           overflow="auto"
           sx={{
             margin: "0 20px",
-            marginTop: "20px"
+            marginTop: "20px",
           }}
         >
           {messages.map((message, index) => (
@@ -85,14 +98,33 @@ const Layout = ({
             >
               <Box
                 bgcolor={
-                  message.role === "assistant" ? "primary.main" : "secondary.main"
+                  message.role === "assistant"
+                    ? "primary.main"
+                    : "secondary.main"
                 }
                 color="white"
                 borderRadius={16}
                 p={3}
-              >
-                {message.content}
-              </Box>
+                sx={{
+                  fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                  fontSize: "1rem",
+                  lineHeight: 1.5,
+                  maxWidth: "80%",
+                  wordWrap: "break-word",
+                  boxShadow: 2,
+                  "& strong": {
+                    fontWeight: "bold",
+                  },
+                  "& br": {
+                    display: "block",
+                    content: '""',
+                    marginTop: "0.5em",
+                  },
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: message.content,
+                }}
+              ></Box>
             </Box>
           ))}
           <Stack direction="row" spacing={2}>
