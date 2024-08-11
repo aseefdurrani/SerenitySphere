@@ -2,11 +2,11 @@
 import { Box, Button, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
-import NavbarComp from "./components/navbar";
+import { useEffect } from 'react';
 
 export default function Home() {
-  const { openSignIn, openSignUp, signOut } = useClerk(); // Added signOut function
-  const { isSignedIn } = useUser();
+  const { openSignIn, openSignUp } = useClerk();
+  const { isSignedIn, user } = useUser();
   const router = useRouter();
 
   const backgroundImage = "/bgs/cloud2.webp";
@@ -29,6 +29,37 @@ export default function Home() {
 
   const redirectUrl = '/home'; // The path to redirect to after sign-in or sign-up
 
+  useEffect(() => {
+    console.log('useEffect triggered', { isSignedIn, user });
+    if (isSignedIn && user && user.id && user.primaryEmailAddress) {
+      console.log('Attempting to store user data', { id: user.id, email: user.primaryEmailAddress.emailAddress });
+      storeUserData(user.id, user.primaryEmailAddress.emailAddress);
+    }
+  }, [isSignedIn, user]);
+
+  const storeUserData = async (userId, email) => {
+    console.log('storeUserData called', { userId, email });
+    try {
+      const response = await fetch('/api/storeUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, email }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to store user data: ${errorData.message}`);
+      }
+
+      const data = await response.json();
+      console.log('User data stored successfully:', data);
+    } catch (error) {
+      console.error('Error storing user data:', error);
+    }
+  };
+
   const handleSignIn = () => {
     if (isSignedIn) {
       router.push(redirectUrl);
@@ -39,12 +70,17 @@ export default function Home() {
 
   const handleSignUp = () => {
     if (isSignedIn) {
-      // Sign out the current user before opening the sign-up modal
-      signOut().then(() => {
-        openSignUp({ afterSignUpUrl: redirectUrl });
-      });
+      router.push(redirectUrl);
     } else {
-      openSignUp({ afterSignUpUrl: redirectUrl });
+      openSignUp({
+        afterSignUpUrl: redirectUrl,
+        redirectUrl: redirectUrl,
+        onSignUpComplete: (result) => {
+          if (result.createdUserId && result.createdSessionId) {
+            storeUserData(result.createdUserId, result.emailAddress);
+          }
+        },
+      });
     }
   };
 
