@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Button, Stack, TextField } from "@mui/material";
 import Layout from "../Layout"; // Import the Layout component
 import { formatTextChunk } from "../../utils/formatText"; // Import the formatTextChunk function
 
@@ -15,21 +14,23 @@ const MindfulChat = () => {
   const [message, setMessage] = useState("");
 
   const sendMessage = async () => {
-    setMessage("");
+    if (!message.trim()) return; // Prevent sending empty messages
+
     setMessages((messages) => [
       ...messages,
       { role: "user", content: message },
       { role: "assistant", content: "" },
     ]);
+    setMessage("");
 
     const response = await fetch("http://localhost:8080/api/mindfulness", {
-      // fetch end point is updated
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify([...messages, { query: message }]),
     });
+
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -57,11 +58,13 @@ const MindfulChat = () => {
       const formattedText = formatTextChunk(text);
       assistantResponse += formattedText;
 
+
       setMessages((messages) => {
         let lastMessage = messages[messages.length - 1];
         let otherMessages = messages.slice(0, messages.length - 1);
         return [
           ...otherMessages,
+
           { ...lastMessage, content: assistantResponse },
         ];
       });
@@ -72,6 +75,7 @@ const MindfulChat = () => {
   };
 
   return (
+
     <Layout>
       <Stack
         direction="column"
@@ -139,6 +143,14 @@ const MindfulChat = () => {
         </Stack>
       </Stack>
     </Layout>
+
+    <Layout
+      messages={messages}
+      message={message}
+      setMessage={setMessage}
+      sendMessage={sendMessage}
+    />
+
   );
 };
 
