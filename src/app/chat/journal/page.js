@@ -1,14 +1,13 @@
 "use client";
-import React from 'react';
+import React, { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
-import { useState } from "react";
-import Layout from '../Layout';
+import Layout from "../Layout"; // Import the Layout component
 
-export default function JournalingPage() {
+const JournalChat = () => {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Hi! I'm the Headstarter support assistant. How can I help you today?`,
+      content: `Hi! I'm the Journaling support assistant at SerenitySphere. How can I help you today?`,
     },
   ]);
 
@@ -18,29 +17,34 @@ export default function JournalingPage() {
     setMessage("");
     setMessages((messages) => [
       ...messages,
-      {
-        role: "user",
-        content: message,
-      },
+      { role: "user", content: message },
       { role: "assistant", content: "" },
     ]);
 
-    const response = await fetch("/api/chat", {
+    const response = await fetch("http://localhost:8080/api/journal", {
+      // fetch end point is updated
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify([...messages, { role: "user", content: message }]),
+      body: JSON.stringify([...messages, { query: message }]),
     }).then(async (res) => {
+      // console.log("here is the RESULT:", res);
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
 
       let result = "";
       return reader.read().then(function processText({ done, value }) {
-        if (done) {
-          return result;
-        }
+        if (done) return result;
+
         const text = decoder.decode(value || new Int8Array(), { stream: true });
+        // console.log("text:", text);
+
+        // parse the JSON text repsonse
+        const jsonResponse = JSON.parse(text);
+        const assistantResponse = jsonResponse.response;
+
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1];
           let otherMessages = messages.slice(0, messages.length - 1);
@@ -48,7 +52,7 @@ export default function JournalingPage() {
             ...otherMessages,
             {
               ...lastMessage,
-              content: lastMessage.content + text,
+              content: lastMessage.content + assistantResponse,
             },
           ];
         });
@@ -80,9 +84,7 @@ export default function JournalingPage() {
           >
             <Box
               bgcolor={
-                message.role === "assistant"
-                  ? "primary.main"
-                  : "secondary.main"
+                message.role === "assistant" ? "primary.main" : "secondary.main"
               }
               color="white"
               borderRadius={16}
@@ -111,4 +113,6 @@ export default function JournalingPage() {
       </Stack>
     </Layout>
   );
-}
+};
+
+export default JournalChat;

@@ -1,13 +1,13 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
-import Layout from '../Layout';
+import Layout from "../Layout";
 
-export default function Home() {
+export default function LiveSupportChat() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Hi! I'm the Headstarter support assistant. How can I help you today?`,
+      content: `Hi! You will be connected with a live agent shortly.`,
     },
   ]);
 
@@ -39,7 +39,10 @@ export default function Home() {
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1];
           let otherMessages = messages.slice(0, messages.length - 1);
-          return [...otherMessages, { ...lastMessage, content: lastMessage.content + text }];
+          return [
+            ...otherMessages,
+            { ...lastMessage, content: lastMessage.content + text },
+          ];
         });
         return reader.read().then(processText);
       });
@@ -69,9 +72,7 @@ export default function Home() {
           >
             <Box
               bgcolor={
-                message.role === "assistant"
-                  ? "primary.main"
-                  : "secondary.main"
+                message.role === "assistant" ? "primary.main" : "secondary.main"
               }
               color="white"
               borderRadius={16}

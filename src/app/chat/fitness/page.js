@@ -1,13 +1,13 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
-import Layout from '../Layout'; // Import the Layout component
+import Layout from "../Layout"; // Import the Layout component
 
 const FitnessChat = () => {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Hi! I'm the Headstarter support assistant. How can I help you today?`,
+      content: `Hi! I'm the Fitness support assistant at SerenitySphere. How can I help you today?`,
     },
   ]);
 
@@ -21,13 +21,16 @@ const FitnessChat = () => {
       { role: "assistant", content: "" },
     ]);
 
-    const response = await fetch("/api/chat", {
+    const response = await fetch("http://localhost:8080/api/fitness", {
+      // fetch end point is updated
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify([...messages, { role: "user", content: message }]),
+      body: JSON.stringify([...messages, { query: message }]),
     }).then(async (res) => {
+      // console.log("here is the RESULT:", res);
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
 
@@ -36,10 +39,23 @@ const FitnessChat = () => {
         if (done) return result;
 
         const text = decoder.decode(value || new Int8Array(), { stream: true });
+        // console.log("text:", text);
+
+        // parse the JSON text repsonse
+        const jsonResponse = JSON.parse(text);
+        console.log("json response", jsonResponse);
+        const assistantResponse = jsonResponse.response;
+
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1];
           let otherMessages = messages.slice(0, messages.length - 1);
-          return [...otherMessages, { ...lastMessage, content: lastMessage.content + text }];
+          return [
+            ...otherMessages,
+            {
+              ...lastMessage,
+              content: lastMessage.content + assistantResponse,
+            },
+          ];
         });
         return reader.read().then(processText);
       });
@@ -69,9 +85,7 @@ const FitnessChat = () => {
           >
             <Box
               bgcolor={
-                message.role === "assistant"
-                  ? "primary.main"
-                  : "secondary.main"
+                message.role === "assistant" ? "primary.main" : "secondary.main"
               }
               color="white"
               borderRadius={16}
