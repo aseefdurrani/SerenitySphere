@@ -1,13 +1,13 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
-import Layout from '../Layout'; // Adjust the path based on your project structure
+import Layout from "../Layout"; // Import the Layout component
 
 const MoodChat = () => {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Hi! I'm the Headstarter support assistant. How can I help you today?`,
+      content: `Hi! I'm the Mood support assistant at SerenitySphere. How can I help you today?`,
     },
   ]);
 
@@ -21,13 +21,16 @@ const MoodChat = () => {
       { role: "assistant", content: "" },
     ]);
 
-    const response = await fetch("/api/chat", {
+    const response = await fetch("http://localhost:8080/api/mood", {
+      // fetch end point is updated
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify([...messages, { role: "user", content: message }]),
+      body: JSON.stringify([...messages, { query: message }]),
     }).then(async (res) => {
+      // console.log("here is the RESULT:", res);
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
 
@@ -36,10 +39,22 @@ const MoodChat = () => {
         if (done) return result;
 
         const text = decoder.decode(value || new Int8Array(), { stream: true });
+        // console.log("text:", text);
+
+        // parse the JSON text repsonse
+        const jsonResponse = JSON.parse(text);
+        const assistantResponse = jsonResponse.response;
+
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1];
           let otherMessages = messages.slice(0, messages.length - 1);
-          return [...otherMessages, { ...lastMessage, content: lastMessage.content + text }];
+          return [
+            ...otherMessages,
+            {
+              ...lastMessage,
+              content: lastMessage.content + assistantResponse,
+            },
+          ];
         });
         return reader.read().then(processText);
       });
@@ -69,9 +84,7 @@ const MoodChat = () => {
           >
             <Box
               bgcolor={
-                message.role === "assistant"
-                  ? "primary.main"
-                  : "secondary.main"
+                message.role === "assistant" ? "primary.main" : "secondary.main"
               }
               color="white"
               borderRadius={16}
