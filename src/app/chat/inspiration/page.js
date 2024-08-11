@@ -31,7 +31,6 @@ const InspirationChat = () => {
       body: JSON.stringify([...messages, { query: message }]),
     });
 
-
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 
@@ -68,89 +67,18 @@ const InspirationChat = () => {
         ];
       });
       reader.read().then(processText);
-
     };
 
     reader.read().then(processText);
   };
 
   return (
-
-    <Layout>
-      <Stack
-        direction="column"
-        width="600px"
-        height="700px"
-        border="1px solid black"
-        p={2}
-        spacing={3}
-        bgcolor="rgba(255, 255, 255, 0.65)"
-        borderRadius={2}
-        overflow="auto"
-      >
-        {messages.map((message, index) => (
-          <Box
-            key={index}
-            display="flex"
-            justifyContent={
-              message.role === "assistant" ? "flex-start" : "flex-end"
-            }
-          >
-            <Box
-              bgcolor={
-                message.role === "assistant" ? "primary.main" : "secondary.main"
-              }
-              color="white"
-              borderRadius={16}
-              p={3}
-              sx={{
-                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-                fontSize: "1rem",
-                lineHeight: 1.5,
-                maxWidth: "80%",
-                wordWrap: "break-word",
-                boxShadow: 2,
-                "& strong": {
-                  fontWeight: "bold",
-                },
-                "& br": {
-                  display: "block",
-                  content: '""',
-                  marginTop: "0.5em",
-                },
-              }}
-              dangerouslySetInnerHTML={{
-                __html: message.content,
-              }}
-            ></Box>
-          </Box>
-        ))}
-        <Stack direction="row" spacing={2}>
-          <TextField
-            label="Message"
-            fullWidth
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                sendMessage();
-              }
-            }}
-          />
-          <Button variant="contained" onClick={sendMessage}>
-            Send
-          </Button>
-        </Stack>
-      </Stack>
-    </Layout>
-
     <Layout
       messages={messages}
       message={message}
       setMessage={setMessage}
       sendMessage={sendMessage}
     />
-
   );
 };
 
