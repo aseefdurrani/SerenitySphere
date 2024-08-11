@@ -1,15 +1,17 @@
 "use client";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import NavbarComp from "../components/navbar";
-import { useEffect } from "react";
-import DrawerComponent from "../components/drawer";
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import NavbarComp from "../components/navbar";
 
 export default function Home() {
   const { user } = useUser();
   const backgroundImage = "/bgs/sphere.webp";
   const router = useRouter();
+
+  // Local state to track if user data is stored
+  const [isUserDataStored, setIsUserDataStored] = useState(false);
 
   const handleButtonClick = (path) => {
     router.push(path);
@@ -57,6 +59,37 @@ export default function Home() {
       }
     `;
   };
+
+  const storeUserData = async (userId, email) => {
+    console.log("Storing user data", { userId, email });
+    try {
+      const response = await fetch("/api/storeUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, email }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to store user data: ${errorData.message}`);
+      }
+
+      const data = await response.json();
+      console.log("User data stored successfully:", data);
+      setIsUserDataStored(true); // Set the flag to true on successful storage
+    } catch (error) {
+      console.error("Error storing user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (user && user.id && user.primaryEmailAddress && !isUserDataStored) {
+      console.log("User detected, attempting to store data", { id: user.id, email: user.primaryEmailAddress.emailAddress });
+      storeUserData(user.id, user.primaryEmailAddress.emailAddress);
+    }
+  }, [user, isUserDataStored]);
 
   useEffect(() => {
     const styleSheet = document.styleSheets[0];
