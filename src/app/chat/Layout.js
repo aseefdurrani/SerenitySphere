@@ -11,6 +11,9 @@ const Layout = ({
   activeChat,
   setActiveChat,
   startNewConversation,
+  loadConversation, // Ensure the loadConversation function is passed in
+  handleConversationClick, // Accept the function as a prop
+  chatType, // Add chatType as a prop
   children,
 }) => {
   return (
@@ -38,16 +41,19 @@ const Layout = ({
           overflow="auto"
           sx={{ marginRight: "20px" }}
         >
-          <Button onClick={startNewConversation} sx={{ width: "100%", bgcolor: "primary.dark" }}>
+          <Button
+            onClick={() => startNewConversation(chatType)} // Use the chatType prop
+            sx={{ width: "100%", bgcolor: "primary.dark" }}
+          >
             New Conversation
           </Button>
           <List>
-            {chatTopics.map((topic, index) => (
+          {chatTopics.map((topic, index) => (
               <ListItem
                 key={index}
                 button
                 selected={topic.id === activeChat?.id}
-                onClick={() => setActiveChat(topic)}
+                onClick={() => handleConversationClick(topic)}
                 sx={{
                   borderBottom: "1px solid white",
                   justifyContent: "center",
@@ -103,11 +109,9 @@ const Layout = ({
                   },
                 }}
                 dangerouslySetInnerHTML={{
-                  __html: message.content,
+                  __html: msg.content, // Corrected usage of dangerouslySetInnerHTML
                 }}
-                >
-                {msg.content}
-              </Box>
+              />
             </Box>
           ))}
           <Stack direction="row" spacing={2}>
