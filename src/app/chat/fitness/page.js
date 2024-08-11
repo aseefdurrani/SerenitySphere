@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
 import Layout from "../Layout"; // Import the Layout component
+import { formatTextChunk } from "../../utils/formatText"; // Import the formatTextChunk function
 
 const FitnessChat = () => {
   const [messages, setMessages] = useState([
@@ -28,38 +29,46 @@ const FitnessChat = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify([...messages, { query: message }]),
-    }).then(async (res) => {
-      // console.log("here is the RESULT:", res);
+    });
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
 
-      let result = "";
-      return reader.read().then(function processText({ done, value }) {
-        if (done) return result;
+    let assistantResponse = "";
 
-        const text = decoder.decode(value || new Int8Array(), { stream: true });
-        // console.log("text:", text);
-
-        // parse the JSON text repsonse
-        const jsonResponse = JSON.parse(text);
-        // console.log("json response", jsonResponse);
-        const assistantResponse = jsonResponse.response;
-
+    const processText = async ({ done, value }) => {
+      if (done) {
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1];
           let otherMessages = messages.slice(0, messages.length - 1);
           return [
             ...otherMessages,
-            {
-              ...lastMessage,
-              content: lastMessage.content + assistantResponse,
-            },
+            { ...lastMessage, content: assistantResponse },
           ];
         });
-        return reader.read().then(processText);
+        return;
+      }
+
+      const text = decoder.decode(value, { stream: true });
+
+      // console.log("UNFORMATTED decdoed text chunk", text);
+
+      // Format the text chunk
+      const formattedText = formatTextChunk(text);
+      assistantResponse += formattedText;
+
+      setMessages((messages) => {
+        let lastMessage = messages[messages.length - 1];
+        let otherMessages = messages.slice(0, messages.length - 1);
+        return [
+          ...otherMessages,
+          { ...lastMessage, content: assistantResponse },
+        ];
       });
-    });
+      reader.read().then(processText);
+    };
+
+    reader.read().then(processText);
   };
 
   return (
@@ -90,9 +99,26 @@ const FitnessChat = () => {
               color="white"
               borderRadius={16}
               p={3}
-            >
-              {message.content}
-            </Box>
+              sx={{
+                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                fontSize: "1rem",
+                lineHeight: 1.5,
+                maxWidth: "80%",
+                wordWrap: "break-word",
+                boxShadow: 2,
+                "& strong": {
+                  fontWeight: "bold",
+                },
+                "& br": {
+                  display: "block",
+                  content: '""',
+                  marginTop: "0.5em",
+                },
+              }}
+              dangerouslySetInnerHTML={{
+                __html: message.content,
+              }}
+            ></Box>
           </Box>
         ))}
         <Stack direction="row" spacing={2}>
