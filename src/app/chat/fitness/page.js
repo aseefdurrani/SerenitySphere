@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../Layout";
 import { useUser } from "@clerk/nextjs";
-import { formatTextChunk } from "../../utils/formatText"; // Import the formatTextChunk function
+import { formatTextChunk } from "../../utils/formatText";
 
 const FitnessChat = () => {
   const [messages, setMessages] = useState([]);
@@ -41,7 +41,7 @@ const FitnessChat = () => {
   useEffect(() => {
     const fetchOrCreateConversation = async () => {
       if (!user || !botId) return;
-
+  
       try {
         const response = await fetch("/api/conversations");
         if (!response.ok) {
@@ -49,7 +49,7 @@ const FitnessChat = () => {
         }
         const conversations = await response.json();
         console.log('Conversations fetched:', conversations);
-
+  
         if (conversations.length === 0) {
           // No existing conversations, create a new one
           const newConversationResponse = await fetch("/api/conversations", {
@@ -59,17 +59,17 @@ const FitnessChat = () => {
             },
             body: JSON.stringify({ botId, userId: user.id }),
           });
-
+  
           if (!newConversationResponse.ok) {
             throw new Error(`HTTP error! status: ${newConversationResponse.status}`);
           }
-
+  
           const newConversation = await newConversationResponse.json();
           console.log('New Conversation:', newConversation);
-
+  
           setChatTopics([newConversation]);
           setActiveChat(newConversation);
-
+  
           // Set initial message if new conversation is created
           setMessages(newConversation.messages.map(msg => ({
             role: msg.senderType.toLowerCase() === 'bot' ? 'assistant' : 'user',
@@ -79,7 +79,7 @@ const FitnessChat = () => {
           // Existing conversations
           setChatTopics(conversations);
           setActiveChat(conversations[0]);
-
+  
           // Load messages from the first existing conversation
           setMessages(conversations[0].messages.map(msg => ({
             role: msg.senderType.toLowerCase() === 'bot' ? 'assistant' : 'user',
@@ -90,108 +90,61 @@ const FitnessChat = () => {
         console.error("Error fetching or creating conversation:", error);
       }
     };
-
+  
     fetchOrCreateConversation();
   }, [user, botId]);
-
+    
+    
   const sendMessage = async () => {
     if (!message.trim()) return; // Prevent sending empty messages
 
-    // Add the user's message to the state and database
-    const newMessage = { role: "user", content: message };
-    setMessages((messages) => [...messages, newMessage]);
+    setMessages((messages) => [
+      ...messages,
+      { role: "user", content: message },
+      { role: "assistant", content: "" },
+    ]);
     setMessage("");
 
-    // Save user message to the database
-    try {
-      await fetch("/api/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          conversationId: activeChat.id,
-          content: message,
-          senderType: "User",
-        }),
+    const response = await fetch("http://localhost:8080/api/fitness", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([...messages, { query: message }]),
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    let result = "";
+    const processText = ({ done, value }) => {
+      if (done) return result;
+
+      const text = decoder.decode(value || new Int8Array(), { stream: true });
+      const jsonResponse = JSON.parse(text);
+      const assistantResponse = jsonResponse.response;
+
+      setMessages((messages) => {
+        let lastMessage = messages[messages.length - 1];
+        let otherMessages = messages.slice(0, messages.length - 1);
+        return [
+          ...otherMessages,
+          {
+            ...lastMessage,
+            content: lastMessage.content + assistantResponse,
+          },
+        ];
       });
-    } catch (error) {
-      console.error("Error saving user message:", error);
-    }
 
-    // Fetch assistant's response
-    try {
-      const response = await fetch("http://localhost:8080/api/fitness", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify([...messages, { query: message }]),
-      });
+      return reader.read().then(processText);
+    };
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      let assistantResponse = "";
-      const processText = async ({ done, value }) => {
-        if (done) {
-          // Update the last message with the complete assistant response
-          setMessages((messages) => {
-            let lastMessage = messages[messages.length - 1];
-            let otherMessages = messages.slice(0, messages.length - 1);
-            return [
-              ...otherMessages,
-              { ...lastMessage, content: assistantResponse },
-            ];
-          });
-
-          // Save assistant's complete message to the database
-          try {
-            await fetch("/api/messages", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                conversationId: activeChat.id,
-                content: assistantResponse,
-                senderType: "Bot",
-              }),
-            });
-          } catch (error) {
-            console.error("Error saving assistant message:", error);
-          }
-
-          return;
-        }
-
-        const text = decoder.decode(value, { stream: true });
-
-        // Format the text chunk
-        const formattedText = formatTextChunk(text);
-        assistantResponse += formattedText;
-
-        setMessages((messages) => {
-          let lastMessage = messages[messages.length - 1];
-          let otherMessages = messages.slice(0, messages.length - 1);
-          return [
-            ...otherMessages,
-            { ...lastMessage, content: assistantResponse },
-          ];
-        });
-
-        return reader.read().then(processText);
-      };
-
-      reader.read().then(processText);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
+    reader.read().then(processText);
   };
-
+  
   const startNewConversation = async () => {
-    if (!user || !botId) return;
-
+    if (!user || !botId) return; 
+  
     try {
       const response = await fetch("/api/conversations", {
         method: "POST",
@@ -200,11 +153,11 @@ const FitnessChat = () => {
         },
         body: JSON.stringify({ botId, userId: user.id }),
       });
-
+  
       const newConversation = await response.json();
       setChatTopics((topics) => [newConversation, ...topics]);
       setActiveChat(newConversation);
-
+  
       // Convert the messages to the correct format
       setMessages(newConversation.messages.map(msg => ({
         role: msg.senderType.toLowerCase() === 'bot' ? 'assistant' : 'user',
