@@ -141,13 +141,16 @@ const FitnessChat = () => {
       console.error("Error saving user message:", error);
     }
 
-    const response = await fetch("http://localhost:8080/api/fitness", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify([...messages, { query: message }]),
-    });
+    const response = await fetch(
+      "https://serenitybackend.onrender.com/api/fitness",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([...messages, { query: message }]),
+      }
+    );
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();

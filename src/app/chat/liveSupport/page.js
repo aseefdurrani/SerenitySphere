@@ -142,13 +142,16 @@ const LiveSupportChat = () => {
     }
 
     // change for live support
-    const response = await fetch("http://localhost:8080/api/liveSupport", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify([...messages, { query: message }]),
-    });
+    const response = await fetch(
+      "https://serenitybackend.onrender.com/api/liveSupport",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([...messages, { query: message }]),
+      }
+    );
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
