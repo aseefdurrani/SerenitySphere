@@ -96,7 +96,7 @@ const Layout = ({
               marginLeft: "20px",
               borderRadius: 2,
               overflow: "hidden",
-              boxShadow: 3,
+              boxShadow: 4,
             }}
           >
             <Button
@@ -143,6 +143,7 @@ const Layout = ({
             sx={{
               margin: "0 20px",
               overflow: "hidden",
+              boxShadow: 4,
             }}
           >
             <ScrollableChatArea ref={chatAreaRef} messages={messages} />
