@@ -1,7 +1,7 @@
 "use client";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useUser } from "@clerk/nextjs";
 import NavbarComp from "../components/navbar";
 
@@ -34,18 +34,22 @@ export default function Home() {
     },
   };
 
-  const predefinedKeyframes = [
-    { start: 0, mid: -16, end: 0 },
-    { start: 0, mid: 16, end: 0 },
-    { start: 0, mid: -9, end: 0 },
-    { start: 0, mid: 9, end: 0 },
-    { start: 0, mid: -14, end: 0 },
-    { start: 0, mid: 14, end: 0 },
-  ];
+  const predefinedKeyframes = useMemo(
+    () => [
+      { start: 0, mid: -16, end: 0 },
+      { start: 0, mid: 16, end: 0 },
+      { start: 0, mid: -9, end: 0 },
+      { start: 0, mid: 9, end: 0 },
+      { start: 0, mid: -14, end: 0 },
+      { start: 0, mid: 14, end: 0 },
+    ],
+    []
+  );
 
-  const generateKeyframes = (index) => {
-    const { start, mid, end } = predefinedKeyframes[index];
-    return `
+  const generateKeyframes = useCallback(
+    (index) => {
+      const { start, mid, end } = predefinedKeyframes[index];
+      return `
       @keyframes float-${index} {
         0% {
           transform: translateY(${start}px);
@@ -58,7 +62,9 @@ export default function Home() {
         }
       }
     `;
-  };
+    },
+    [predefinedKeyframes]
+  );
 
   const storeUserData = async (userId, email) => {
     console.log("Storing user data", { userId, email });
@@ -86,7 +92,10 @@ export default function Home() {
 
   useEffect(() => {
     if (user && user.id && user.primaryEmailAddress && !isUserDataStored) {
-      console.log("User detected, attempting to store data", { id: user.id, email: user.primaryEmailAddress.emailAddress });
+      console.log("User detected, attempting to store data", {
+        id: user.id,
+        email: user.primaryEmailAddress.emailAddress,
+      });
       storeUserData(user.id, user.primaryEmailAddress.emailAddress);
     }
   }, [user, isUserDataStored]);
@@ -97,7 +106,7 @@ export default function Home() {
       const keyframes = generateKeyframes(i);
       styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
     }
-  }, []);
+  }, [generateKeyframes, predefinedKeyframes.length]);
 
   return (
     <>
