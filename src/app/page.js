@@ -2,48 +2,51 @@
 import { Box, Button, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export default function Home() {
   const { openSignIn, openSignUp } = useClerk();
   const { isSignedIn, user } = useUser();
   const router = useRouter();
 
-  const backgroundImage = "/bgs/cloud2.webp";
+  const backgroundImage = "/assets/SerenitySphereBlueWave-transformed.png";
 
   const buttonStyle = {
     marginTop: "30px",
     backgroundColor: "transparent",
-    color: "black",
+    color: "#14213d",
     padding: "5px 20px",
     borderRadius: "20px",
-    border: "1px solid black",
-    textTransform: 'capitalize',
+    border: "1px solid #14213d",
+    textTransform: "capitalize",
     "&:hover": {
       backgroundColor: "rgba(0, 0, 0, 0.1)",
       boxShadow: "0 0.5em 0.5em -0.4em #ffe5d9",
       transform: "translateY(-0.15em)",
       cursor: "pointer",
-    }
+    },
   };
 
-  const redirectUrl = '/home'; // The path to redirect to after sign-in or sign-up
+  const redirectUrl = "/home"; // The path to redirect to after sign-in or sign-up
 
   useEffect(() => {
-    console.log('useEffect triggered', { isSignedIn, user });
+    console.log("useEffect triggered", { isSignedIn, user });
     if (isSignedIn && user && user.id && user.primaryEmailAddress) {
-      console.log('Attempting to store user data', { id: user.id, email: user.primaryEmailAddress.emailAddress });
+      console.log("Attempting to store user data", {
+        id: user.id,
+        email: user.primaryEmailAddress.emailAddress,
+      });
       storeUserData(user.id, user.primaryEmailAddress.emailAddress);
     }
   }, [isSignedIn, user]);
 
   const storeUserData = async (userId, email) => {
-    console.log('storeUserData called', { userId, email });
+    console.log("storeUserData called", { userId, email });
     try {
-      const response = await fetch('/api/storeUser', {
-        method: 'POST',
+      const response = await fetch("/api/storeUser", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ userId, email }),
       });
@@ -54,9 +57,9 @@ export default function Home() {
       }
 
       const data = await response.json();
-      console.log('User data stored successfully:', data);
+      console.log("User data stored successfully:", data);
     } catch (error) {
-      console.error('Error storing user data:', error);
+      console.error("Error storing user data:", error);
     }
   };
 
@@ -108,7 +111,7 @@ export default function Home() {
             sx={{
               fontSize: "5rem",
               fontWeight: "light",
-              color: "black",
+              color: "#003049",
             }}
           >
             SerenitySphere
@@ -117,23 +120,15 @@ export default function Home() {
             sx={{
               fontSize: "1.2rem",
               fontWeight: "light",
-              color: "black",
+              color: "#14213d",
             }}
           >
             your oasis of calm and care
           </Box>
-          <Button
-            variant="contained"
-            sx={buttonStyle}
-            onClick={handleSignIn}
-          >
+          <Button variant="contained" sx={buttonStyle} onClick={handleSignIn}>
             Sign in
           </Button>
-          <Button
-            variant="contained"
-            sx={buttonStyle}
-            onClick={handleSignUp}
-          >
+          <Button variant="contained" sx={buttonStyle} onClick={handleSignUp}>
             Sign up
           </Button>
         </Stack>
