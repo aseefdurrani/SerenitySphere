@@ -3,6 +3,7 @@ import { Box, Button, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useEffect } from "react";
+import { Opacity } from "@mui/icons-material";
 
 export default function Home() {
   const { openSignIn, openSignUp } = useClerk();
@@ -13,7 +14,7 @@ export default function Home() {
 
   const buttonStyle = {
     marginTop: "30px",
-    backgroundColor: "transparent",
+    backgroundColor: "rgba(254, 250, 224, 0.7)",
     color: "#14213d",
     padding: "5px 20px",
     borderRadius: "20px",
