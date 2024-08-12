@@ -14,6 +14,37 @@ const MoodChat = () => {
 
   const { user } = useUser();
 
+  const startNewConversation = React.useCallback(
+    async (chatType) => {
+      if (!user || !botId) return;
+
+      try {
+        const response = await fetch("/api/conversations", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ botId, userId: user.id, chatType }), // Pass chatType here
+        });
+
+        const newConversation = await response.json();
+        setChatTopics((topics) => [newConversation, ...topics]);
+        setActiveChat(newConversation);
+
+        // Convert the messages to the correct format
+        setMessages(
+          newConversation.messages.map((msg) => ({
+            role: msg.senderType.toLowerCase() === "bot" ? "assistant" : "user",
+            content: msg.content,
+          }))
+        );
+      } catch (error) {
+        console.error("Error starting new conversation:", error);
+      }
+    },
+    [botId, user]
+  );
+
   useEffect(() => {
     const fetchBotId = async () => {
       try {
@@ -75,7 +106,7 @@ const MoodChat = () => {
     };
 
     fetchConversations();
-  }, [user, botId, chatType]);
+  }, [user, botId, chatType, startNewConversation]);
 
   const sendMessage = async () => {
     if (!message.trim() || !activeChat) return; // Prevent sending empty messages if no active chat
@@ -165,34 +196,6 @@ const MoodChat = () => {
     };
 
     reader.read().then(processText);
-  };
-
-  const startNewConversation = async (chatType) => {
-    if (!user || !botId) return;
-
-    try {
-      const response = await fetch("/api/conversations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ botId, userId: user.id, chatType }), // Pass chatType here
-      });
-
-      const newConversation = await response.json();
-      setChatTopics((topics) => [newConversation, ...topics]);
-      setActiveChat(newConversation);
-
-      // Convert the messages to the correct format
-      setMessages(
-        newConversation.messages.map((msg) => ({
-          role: msg.senderType.toLowerCase() === "bot" ? "assistant" : "user",
-          content: msg.content,
-        }))
-      );
-    } catch (error) {
-      console.error("Error starting new conversation:", error);
-    }
   };
 
   const handleConversationClick = (topic) => {

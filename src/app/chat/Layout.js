@@ -8,7 +8,7 @@ const ScrollableChatArea = React.forwardRef(({ messages }, ref) => {
     if (ref.current) {
       ref.current.scrollTop = ref.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, ref]);
 
   return (
     <Box
@@ -184,5 +184,8 @@ const Layout = ({
     </>
   );
 };
+
+Layout.displayName = "Layout"; // Add display name
+ScrollableChatArea.displayName = "ScrollableChatArea";
 
 export default Layout;
