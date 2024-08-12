@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState, useEffect } from "react";
 import Layout from "../Layout";
 import { useUser } from "@clerk/nextjs";
@@ -17,10 +17,10 @@ const LiveSupportChat = () => {
   useEffect(() => {
     const fetchBotId = async () => {
       try {
-        const response = await fetch('/api/getBotId', {
-          method: 'POST',
+        const response = await fetch("/api/getBotId", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ name: chatType }), // Use chatType variable
         });
@@ -29,10 +29,10 @@ const LiveSupportChat = () => {
         if (data.botId) {
           setBotId(data.botId);
         } else {
-          console.error('Bot ID not found');
+          console.error("Bot ID not found");
         }
       } catch (error) {
-        console.error('Error fetching bot ID:', error);
+        console.error("Error fetching bot ID:", error);
       }
     };
 
@@ -44,22 +44,27 @@ const LiveSupportChat = () => {
       if (!user || !botId) return;
 
       try {
-        const response = await fetch(`/api/conversations?userId=${user.id}&botId=${botId}`);
+        const response = await fetch(
+          `/api/conversations?userId=${user.id}&botId=${botId}`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const conversations = await response.json();
-        console.log('Conversations fetched:', conversations);
+        console.log("Conversations fetched:", conversations);
 
         if (conversations.length > 0) {
           setChatTopics(conversations);
           setActiveChat(conversations[0]);
 
           // Load messages from the first existing conversation
-          setMessages(conversations[0].messages.map(msg => ({
-            role: msg.senderType.toLowerCase() === 'bot' ? 'assistant' : 'user',
-            content: msg.content
-          })));
+          setMessages(
+            conversations[0].messages.map((msg) => ({
+              role:
+                msg.senderType.toLowerCase() === "bot" ? "assistant" : "user",
+              content: msg.content,
+            }))
+          );
         } else {
           // Start a new conversation if no existing ones
           startNewConversation(chatType);
@@ -77,14 +82,14 @@ const LiveSupportChat = () => {
 
     const userMessage = {
       role: "user",
-      content: message
+      content: message,
     };
 
     // Add the user's message to the state
     setMessages((messages) => [
       ...messages,
       userMessage,
-      { role: "assistant", content: "" }
+      { role: "assistant", content: "" },
     ]);
     setMessage("");
 
@@ -98,8 +103,8 @@ const LiveSupportChat = () => {
         body: JSON.stringify({
           conversationId: activeChat.id,
           content: message,
-          senderType: "User"
-        })
+          senderType: "User",
+        }),
       });
     } catch (error) {
       console.error("Error saving user message:", error);
@@ -130,8 +135,8 @@ const LiveSupportChat = () => {
             body: JSON.stringify({
               conversationId: activeChat.id,
               content: assistantResponse,
-              senderType: "Bot"
-            })
+              senderType: "Bot",
+            }),
           });
         } catch (error) {
           console.error("Error saving assistant message:", error);
@@ -140,11 +145,10 @@ const LiveSupportChat = () => {
       }
 
       const text = decoder.decode(value || new Int8Array(), { stream: true });
-      const jsonResponse = JSON.parse(text);
-      const chunk = jsonResponse.response;
 
-      // Format and update the assistant's response
-      assistantResponse += formatTextChunk(chunk);
+      // Format the text chunk
+      const formattedText = formatTextChunk(text);
+      assistantResponse += formattedText;
 
       setMessages((messages) => {
         let lastMessage = messages[messages.length - 1];
@@ -163,7 +167,7 @@ const LiveSupportChat = () => {
 
     reader.read().then(processText);
   };
-  
+
   const startNewConversation = async (chatType) => {
     if (!user || !botId) return;
 
@@ -181,10 +185,12 @@ const LiveSupportChat = () => {
       setActiveChat(newConversation);
 
       // Convert the messages to the correct format
-      setMessages(newConversation.messages.map(msg => ({
-        role: msg.senderType.toLowerCase() === 'bot' ? 'assistant' : 'user',
-        content: msg.content
-      })));
+      setMessages(
+        newConversation.messages.map((msg) => ({
+          role: msg.senderType.toLowerCase() === "bot" ? "assistant" : "user",
+          content: msg.content,
+        }))
+      );
     } catch (error) {
       console.error("Error starting new conversation:", error);
     }
@@ -192,12 +198,14 @@ const LiveSupportChat = () => {
 
   const handleConversationClick = (topic) => {
     setActiveChat(topic);
-    setMessages(topic.messages.map(msg => ({
-      role: msg.senderType.toLowerCase() === 'bot' ? 'assistant' : 'user',
-      content: msg.content
-    })));
+    setMessages(
+      topic.messages.map((msg) => ({
+        role: msg.senderType.toLowerCase() === "bot" ? "assistant" : "user",
+        content: msg.content,
+      }))
+    );
   };
-  
+
   return (
     <Layout
       messages={messages}
