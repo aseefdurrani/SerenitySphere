@@ -74,19 +74,20 @@ const FitnessChat = () => {
 
   const sendMessage = async () => {
     if (!message.trim() || !activeChat) return; // Prevent sending empty messages if no active chat
-  
+
     const userMessage = {
       role: "user",
       content: message
     };
-  
+
     // Add the user's message to the state
     setMessages((messages) => [
       ...messages,
-      userMessage
+      userMessage,
+      { role: "assistant", content: "" }
     ]);
     setMessage("");
-  
+
     // Save the user's message to the database
     try {
       await fetch("/api/messages", {
@@ -103,18 +104,18 @@ const FitnessChat = () => {
     } catch (error) {
       console.error("Error saving user message:", error);
     }
-  
+
     const response = await fetch("http://localhost:8080/api/fitness", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ query: message }),
+      body: JSON.stringify([...messages, { query: message }]),
     });
-  
+
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
-  
+
     let assistantResponse = "";
     const processText = async ({ done, value }) => {
       if (done) {
@@ -136,22 +137,29 @@ const FitnessChat = () => {
         }
         return;
       }
-  
+
       const text = decoder.decode(value || new Int8Array(), { stream: true });
       const jsonResponse = JSON.parse(text);
-      assistantResponse += formatTextChunk(jsonResponse.response);
-  
-      setMessages((messages) => [
-        ...messages,
-        {
-          role: "assistant",
-          content: assistantResponse
-        }
-      ]);
-  
-      reader.read().then(processText);
+      const chunk = jsonResponse.response;
+
+      // Format and update the assistant's response
+      assistantResponse += formatTextChunk(chunk);
+
+      setMessages((messages) => {
+        let lastMessage = messages[messages.length - 1];
+        let otherMessages = messages.slice(0, messages.length - 1);
+        return [
+          ...otherMessages,
+          {
+            ...lastMessage,
+            content: assistantResponse,
+          },
+        ];
+      });
+
+      return reader.read().then(processText);
     };
-  
+
     reader.read().then(processText);
   };
   
